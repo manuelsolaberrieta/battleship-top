@@ -12,7 +12,7 @@ export default class Gameboard {
     for (let i = 0; i < rows; i++) {
       grid[i] = [];
       for (let j = 0; j < columns; j++) {
-        grid[i][j] = "W";
+        grid[i][j] = { coords: [i, j], state: "none" };
       }
     }
     return grid;
@@ -37,14 +37,13 @@ export default class Gameboard {
         square.addEventListener("click", () => {
           this.receiveAttack([i, j]);
         });
-        square.textContent = place;
-        if (place == "S") {
-          square.classList.add("ship-square");
-        } else if (place == "W") {
+        if (place.state == "ship") {
           square.classList.add("water-square");
-        } else if (place == "O") {
+        } else if (place.state == "none") {
+          square.classList.add("water-square");
+        } else if (place.state == "miss") {
           square.classList.add("missed-square");
-        } else if (place == "X") {
+        } else if (place.state == "hit") {
           square.classList.add("hit-square");
         }
         board.append(square);
@@ -78,7 +77,7 @@ export default class Gameboard {
       let col = coords[1];
       for (let i = 0; i < ship.length; i++) {
         ship.position.push([row, col]);
-        this.grid[row][col] = "S";
+        this.grid[row][col].state = "ship";
         if (HoV == "Horizontal") {
           col += 1;
         } else {
@@ -97,7 +96,7 @@ export default class Gameboard {
     let col = coords[1];
     let touchedShip;
     let latLon = 0;
-    if (this.grid[row][col] === "S") {
+    if (this.grid[row][col].state === "ship") {
       for (let i = 0; i < this.ships.length; i++) {
         for (let j = 0; j < this.ships[i].position.length; j++) {
           for (let h = 0; h < this.ships[i].position[j].length; h++) {
@@ -111,17 +110,17 @@ export default class Gameboard {
           }
         }
       }
-      this.grid[row][col] = "X";
+      this.grid[row][col].state = "hit";
       this.displayGrid();
-      //see if i can move this function to index.js(gamelooop)
+      //see if i can move this function to index.js(gameloop)
       if (this.allSunk()) {
         //temporary game over screen
         document.querySelector("body").append("GAME OVER");
       }
-    } else if (this.grid[row][col] === "O") {
+    } else if (this.grid[row][col].state === "miss") {
       return false;
-    } else if (this.grid[row][col] === "W") {
-      this.grid[row][col] = "O";
+    } else if (this.grid[row][col].state === "none") {
+      this.grid[row][col].state = "miss";
       this.displayGrid();
     }
   }
