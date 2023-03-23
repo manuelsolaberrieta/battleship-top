@@ -1,6 +1,7 @@
 import Ship from "./Ship.js";
 export default class Gameboard {
-  constructor() {
+  constructor(boardElement) {
+    this.board = document.querySelector(`${boardElement}`);
     this.grid = this.makeGrid();
     this.ships = this.makeShips();
   }
@@ -29,8 +30,7 @@ export default class Gameboard {
   }
 
   displayGrid() {
-    const board = document.querySelector(".board");
-    board.replaceChildren();
+    this.board.replaceChildren();
     this.grid.forEach((arr, i) => {
       arr.forEach((place, j) => {
         const square = document.createElement("div");
@@ -38,7 +38,7 @@ export default class Gameboard {
           this.receiveAttack([i, j]);
         });
         if (place.state == "ship") {
-          square.classList.add("water-square");
+          square.classList.add("aaaaa-square");
         } else if (place.state == "none") {
           square.classList.add("water-square");
         } else if (place.state == "miss") {
@@ -46,10 +46,9 @@ export default class Gameboard {
         } else if (place.state == "hit") {
           square.classList.add("hit-square");
         }
-        board.append(square);
+        this.board.append(square);
       });
     });
-    document.querySelector("main").append(board);
   }
 
   placementIsValid(ship, coords, HoV = "Horizontal") {
@@ -60,12 +59,26 @@ export default class Gameboard {
       if (col + shipLength > 9) {
         return false;
       } else {
+        for (let i = 0; i < ship.length; i++) {
+          if (this.grid[row][col].state == "ship") {
+            return false;
+          } else {
+            col += 1;
+          }
+        }
         return true;
       }
     } else if (HoV == "Vertical") {
       if (row + shipLength > 9) {
         return false;
       } else {
+        for (let i = 0; i < ship.length; i++) {
+          if (this.grid[row][col].state == "ship") {
+            return false;
+          } else {
+            row += 1;
+          }
+        }
         return true;
       }
     }
@@ -137,5 +150,21 @@ export default class Gameboard {
     } else {
       return false;
     }
+  }
+  computerPlacement(shipNumber) {
+    let currentPlacement = [
+      Math.floor(Math.random() * 10),
+      Math.floor(Math.random() * 10),
+    ];
+    while (
+      this.placeShip(this.ships[shipNumber], [
+        currentPlacement[0],
+        currentPlacement[1],
+      ]) == false
+    ) {
+      currentPlacement[0] = Math.floor(Math.random() * 10);
+      currentPlacement[1] = Math.floor(Math.random() * 10);
+    }
+    return currentPlacement;
   }
 }
