@@ -1,7 +1,8 @@
-import Ship from "./Ship.js";
+import Gameboard from "./Gameboard.js";
 export default class Player {
-  constructor(name = "Player1") {
+  constructor(name = "Player1", boardHTML) {
     this.name = name;
+    this.board = new Gameboard(boardHTML);
   }
   computerAttack(board) {
     let currentAttack = [

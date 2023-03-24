@@ -2,11 +2,9 @@ export default class Ship {
   constructor(length) {
     this.length = length;
     this.timesHit = 0;
-    this.sunk = this.isSunk();
+    this.sunk = false;
     this.position = [];
-  }
-  hit() {
-    this.timesHit += 1;
+    this.index = undefined;
   }
   isSunk() {
     if (this.length === this.timesHit) {
@@ -14,5 +12,9 @@ export default class Ship {
     } else {
       return false;
     }
+  }
+  hit() {
+    this.timesHit += 1;
+    this.sunk = this.isSunk();
   }
 }
