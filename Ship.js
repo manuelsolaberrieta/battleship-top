@@ -5,6 +5,7 @@ export default class Ship {
     this.sunk = false;
     this.position = [];
     this.index = undefined;
+    this.name = "";
   }
   isSunk() {
     if (this.length === this.timesHit) {

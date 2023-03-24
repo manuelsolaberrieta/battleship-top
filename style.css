@@ -34,3 +34,25 @@ h2 {
 .missed-square {
   background-color: rgb(15, 40, 48);
 }
+.garage {
+  margin: auto;
+  margin-top: 20px;
+  padding: 20px;
+  width: max-content;
+  background-color: rgb(198, 198, 198);
+  border: 2px solid black;
+}
+.ship-frame {
+  /*ver como sacar los estilos del draggable por default*/
+}
+.drag-over {
+  border: dashed 1px red;
+}
+.ship-piece {
+  display: inline-block;
+  height: calc(50vh / 10);
+  width: calc(50vh / 10);
+  border: 1px solid black;
+  background-color: rgb(75, 75, 75);
+}
+/*HACER EL MAX QUERY A 800PX*/

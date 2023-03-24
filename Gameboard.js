@@ -23,25 +23,33 @@ export default class Gameboard {
 
   makeShips() {
     const sizes = [5, 4, 3, 3, 2];
+    const names = [
+      "Carrier",
+      "Battleship",
+      "Cruiser",
+      "Submarine",
+      "Destroyer",
+    ];
     const shipsArr = [];
     for (let i = 0; i < sizes.length; i++) {
       let ship = new Ship(sizes[i]);
       ship.index = i;
+      ship.name = names[i];
       shipsArr.push(ship);
     }
     return shipsArr;
   }
 
-  displayGrid(own = false) {
+  displayGrid() {
     this.board.replaceChildren();
     this.grid.forEach((arr, i) => {
       arr.forEach((place, j) => {
         const square = document.createElement("div");
-        if (own == false) {
-          square.addEventListener("click", () => {
-            this.receiveAttack([i, j]);
-          });
-        }
+        square.setAttribute("row", `${this.grid[i][j].coords[0]}`);
+        square.setAttribute("col", `${this.grid[i][j].coords[1]}`);
+        square.addEventListener("click", () => {
+          this.receiveAttack([i, j]);
+        });
         if (place.state == "ship") {
           //cambiar cuando termine las pruebas
           square.classList.add("aaaaa-square");
@@ -61,8 +69,9 @@ export default class Gameboard {
     const shipLength = ship.length;
     let row = coords[0];
     let col = coords[1];
+    console.log(col + shipLength);
     if (HoV == "Horizontal") {
-      if (col + shipLength > 9) {
+      if (col + shipLength - 1 > 9) {
         return false;
       } else {
         for (let i = 0; i < ship.length; i++) {
@@ -75,7 +84,7 @@ export default class Gameboard {
         return true;
       }
     } else if (HoV == "Vertical") {
-      if (row + shipLength > 9) {
+      if (row + shipLength - 1 > 9) {
         return false;
       } else {
         for (let i = 0; i < ship.length; i++) {
@@ -105,6 +114,7 @@ export default class Gameboard {
         }
       }
       this.displayGrid();
+      return true;
     } else {
       return false;
     }
