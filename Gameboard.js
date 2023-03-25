@@ -1,13 +1,23 @@
 import Ship from "./Ship.js";
+
 export default class Gameboard {
-  constructor(boardElement) {
+  constructor(boardElement, isPc, playerName) {
     this.board = document.querySelector(`${boardElement}`);
     this.grid = this.makeGrid();
     this.ships = this.makeShips();
     this.sunk = 0;
     this.gameOver = false;
+    this.revealShips = false;
+    this.thisTurn = false;
+    this.shipsPlaced = [];
+    this.isPc = isPc;
+    this.playerName = playerName;
   }
 
+  setEnemy(enemyBoard, enemyName) {
+    this.enemyBoard = enemyBoard;
+    this.enemyName = enemyName;
+  }
   makeGrid() {
     let grid = [];
     let rows = 10;
@@ -20,7 +30,7 @@ export default class Gameboard {
     }
     return grid;
   }
-
+  /////CHANGE ALL CONSOLE LOGS TO HTML UI WHEN FINISHED
   makeShips() {
     const sizes = [5, 4, 3, 3, 2];
     const names = [
@@ -52,9 +62,17 @@ export default class Gameboard {
         });
         if (place.state == "ship") {
           //cambiar cuando termine las pruebas
-          square.classList.add("aaaaa-square");
+          if (this.revealShips == true) {
+            square.classList.add("ship-square");
+          } else {
+            square.classList.add("aaaa-square");
+          }
         } else if (place.state == "none") {
-          square.classList.add("water-square");
+          if (this.isPc) {
+            square.classList.add("pc-water-square");
+          } else {
+            square.classList.add("water-square");
+          }
         } else if (place.state == "miss") {
           square.classList.add("missed-square");
         } else if (place.state == "hit") {
@@ -69,7 +87,6 @@ export default class Gameboard {
     const shipLength = ship.length;
     let row = coords[0];
     let col = coords[1];
-    console.log(col + shipLength);
     if (HoV == "Horizontal") {
       if (col + shipLength - 1 > 9) {
         return false;
@@ -113,22 +130,45 @@ export default class Gameboard {
           row += 1;
         }
       }
+      this.shipsPlaced.push(1);
       this.displayGrid();
-      return true;
+      if (this.shipsPlaced.length == this.ships.length) {
+        this.thisTurn = false;
+        this.enemyBoard.thisTurn = true;
+        console.log(this.enemyName + " turn");
+        return true;
+      } else {
+        return true;
+      }
     } else {
       return false;
     }
   }
-
+  showOrHideShips() {
+    this.revealShips == true
+      ? (this.revealShips = false)
+      : (this.revealShips = true);
+    this.displayGrid();
+  }
   receiveAttack(coords) {
-    //move gameover to index script
-    if (this.gameOver) {
+    if (this.enemyBoard.shipsPlaced.length != this.enemyBoard.ships.length) {
+      console.log("must place ships first");
+      return false;
+    }
+    if (this.gameOver || this.enemyBoard.gameOver) {
+      return false;
+    }
+    if (this.thisTurn == true) {
+      console.log("You can't attack yourself");
       return false;
     }
     let row = coords[0];
     let col = coords[1];
     let touchedShip;
     if (this.grid[row][col].state === "ship") {
+      this.enemyBoard.thisTurn = false;
+      this.thisTurn = true;
+      console.log(this.playerName + " turn");
       touchedShip = this.grid[row][col].shipIndex;
       this.ships[touchedShip].hit();
       this.grid[row][col].state = "hit";
@@ -141,11 +181,22 @@ export default class Gameboard {
           this.gameOver = true;
         }
       }
-    } else if (this.grid[row][col].state === "miss") {
-      return false;
     } else if (this.grid[row][col].state === "none") {
+      this.thisTurn = true;
+      this.enemyBoard.thisTurn = false;
+      console.log(this.playerName + " turn");
       this.grid[row][col].state = "miss";
       this.displayGrid();
+    } else if (this.grid[row][col].state === "miss") {
+      this.thisTurn = false;
+      this.enemyBoard.thisTurn = true;
+      console.log(this.enemyName + " turn");
+      return false;
+    } else if (this.grid[row][col].state === "hit") {
+      this.thisTurn = false;
+      this.enemyBoard.thisTurn = true;
+      console.log(this.enemyName + " turn");
+      return false;
     }
   }
 
@@ -164,5 +215,16 @@ export default class Gameboard {
       currentPlacement[1] = Math.floor(Math.random() * 10);
     }
     return currentPlacement;
+  }
+  computerAttack() {
+    let currentAttack = [
+      Math.floor(Math.random() * 10),
+      Math.floor(Math.random() * 10),
+    ];
+    //arreglar
+    while (true) {
+      currentAttack[0] = Math.floor(Math.random() * 10);
+      currentAttack[1] = Math.floor(Math.random() * 10);
+    }
   }
 }
