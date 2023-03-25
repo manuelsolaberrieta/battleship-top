@@ -130,7 +130,7 @@ export default class Gameboard {
           row += 1;
         }
       }
-      this.shipsPlaced.push(1);
+      this.shipsPlaced.push(ship.index);
       this.displayGrid();
       if (this.shipsPlaced.length == this.ships.length) {
         this.thisTurn = false;
@@ -166,6 +166,7 @@ export default class Gameboard {
     let col = coords[1];
     let touchedShip;
     if (this.grid[row][col].state === "ship") {
+      console.log("Hit a ship");
       this.enemyBoard.thisTurn = false;
       this.thisTurn = true;
       console.log(this.playerName + " turn");
@@ -182,21 +183,27 @@ export default class Gameboard {
         }
       }
     } else if (this.grid[row][col].state === "none") {
+      console.log("Missed");
       this.thisTurn = true;
       this.enemyBoard.thisTurn = false;
       console.log(this.playerName + " turn");
       this.grid[row][col].state = "miss";
       this.displayGrid();
     } else if (this.grid[row][col].state === "miss") {
+      console.log("Hit a miss, should fire again");
       this.thisTurn = false;
       this.enemyBoard.thisTurn = true;
       console.log(this.enemyName + " turn");
       return false;
     } else if (this.grid[row][col].state === "hit") {
+      console.log("Already hit, should fire again");
       this.thisTurn = false;
       this.enemyBoard.thisTurn = true;
       console.log(this.enemyName + " turn");
       return false;
+    }
+    if (this.isPc && this.thisTurn == true) {
+      this.enemyBoard.receiveAttack(this.computerAttack());
     }
   }
 
@@ -221,10 +228,14 @@ export default class Gameboard {
       Math.floor(Math.random() * 10),
       Math.floor(Math.random() * 10),
     ];
-    //arreglar
-    while (true) {
+    while (
+      this.enemyBoard.grid[currentAttack[0]][currentAttack[1]].state ==
+        "miss" ||
+      this.enemyBoard.grid[currentAttack[0]][currentAttack[1]].state == "hit"
+    ) {
       currentAttack[0] = Math.floor(Math.random() * 10);
       currentAttack[1] = Math.floor(Math.random() * 10);
     }
+    return currentAttack;
   }
 }

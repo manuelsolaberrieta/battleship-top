@@ -2,14 +2,22 @@
   margin: 0;
   padding: 0;
 }
+#title {
+  text-align: center;
+  padding: 20px;
+}
 main {
   display: flex;
   justify-content: center;
   gap: 50px;
 }
+button {
+  padding: 10px;
+}
 h2 {
   text-align: center;
   padding: 10px;
+  margin: auto;
 }
 .board {
   border: 2px solid black;
@@ -49,8 +57,12 @@ h2 {
   background-color: rgb(198, 198, 198);
   border: 2px solid black;
 }
+#buttons {
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+}
 .ship-frame {
-  /*ver como sacar los estilos del draggable por default*/
   width: max-content;
 }
 .drag-over {
@@ -63,4 +75,14 @@ h2 {
   border: 1px solid black;
   background-color: rgb(75, 75, 75);
 }
-/*HACER EL MAX QUERY A 800PX*/
+@media only screen and (max-width: 800px) {
+  main {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .board {
+    height: 70vw;
+    width: 70vw;
+    grid-template-columns: repeat(auto-fit, minmax(calc(70vw / 10), 1fr));
+  }
+}

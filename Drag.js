@@ -60,6 +60,7 @@ export default class Drag {
       //so the ship dissapears from the garage
       const draggable = document.getElementById(id);
       e.target.appendChild(draggable);
+      console.log(this.player.board.shipsPlaced);
     }
     //so the drag events are added again after being overriden by displaygrid()
     this.makeDraggable();
