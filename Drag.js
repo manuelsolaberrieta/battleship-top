@@ -2,6 +2,12 @@ export default class Drag {
   constructor(player) {
     this.player = player;
   }
+  setShipDirection(dir) {
+    this.direction = dir;
+  }
+  getShipDirection() {
+    return this.direction;
+  }
   putShipsUpForGrabbing() {
     const shipsContainer = document.createElement("div");
     shipsContainer.classList.add("ships-container");
@@ -15,6 +21,7 @@ export default class Drag {
       }
       shipFrame.setAttribute("draggable", "true");
       shipFrame.setAttribute("id", `${this.player.board.ships[i].index}`);
+      shipFrame.style.flexDirection = "row";
       shipFrame.addEventListener("dragstart", this.dragStart);
       shipsContainer.append(shipFrame);
     }
@@ -52,17 +59,35 @@ export default class Drag {
     e.target.classList.remove("drag-over");
     const id = e.dataTransfer.getData("text/plain");
     if (
-      this.player.board.placeShip(this.player.board.ships[id], [
-        parseInt(e.target.getAttribute("row")),
-        parseInt(e.target.getAttribute("col")),
-      ])
+      this.player.board.placeShip(
+        this.player.board.ships[id],
+        [
+          parseInt(e.target.getAttribute("row")),
+          parseInt(e.target.getAttribute("col")),
+        ],
+        this.getShipDirection()
+      )
     ) {
       //so the ship dissapears from the garage
       const draggable = document.getElementById(id);
       e.target.appendChild(draggable);
-      console.log(this.player.board.shipsPlaced);
     }
     //so the drag events are added again after being overriden by displaygrid()
     this.makeDraggable();
+  }
+  changeDirection(e) {
+    let dir = e.getAttribute("dir");
+    dir == "Horizontal"
+      ? e.setAttribute("dir", "Vertical")
+      : e.setAttribute("dir", "Horizontal");
+    this.setShipDirection(dir);
+    e.textContent = "Change ship direction";
+  }
+  changeFlex(flex) {
+    flex == "Vertical" ? (flex = "row") : (flex = "column");
+    const shipFrames = document.querySelectorAll(".ship-frame");
+    shipFrames.forEach((shipFrame) => {
+      shipFrame.style.flexDirection = flex;
+    });
   }
 }

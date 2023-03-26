@@ -1,7 +1,7 @@
 import Ship from "./Ship.js";
 
 export default class Gameboard {
-  constructor(boardElement, isPc, playerName) {
+  constructor(boardElement, isPc, playerName, screen) {
     this.board = document.querySelector(`${boardElement}`);
     this.grid = this.makeGrid();
     this.ships = this.makeShips();
@@ -12,12 +12,18 @@ export default class Gameboard {
     this.shipsPlaced = [];
     this.isPc = isPc;
     this.playerName = playerName;
+    this.screen = screen;
   }
 
   setEnemy(enemyBoard, enemyName) {
     this.enemyBoard = enemyBoard;
     this.enemyName = enemyName;
   }
+
+  startBoard(start) {
+    this.start = start;
+  }
+
   makeGrid() {
     let grid = [];
     let rows = 10;
@@ -30,7 +36,7 @@ export default class Gameboard {
     }
     return grid;
   }
-  /////CHANGE ALL CONSOLE LOGS TO HTML UI WHEN FINISHED
+
   makeShips() {
     const sizes = [5, 4, 3, 3, 2];
     const names = [
@@ -135,7 +141,7 @@ export default class Gameboard {
       if (this.shipsPlaced.length == this.ships.length) {
         this.thisTurn = false;
         this.enemyBoard.thisTurn = true;
-        console.log(this.enemyName + " turn");
+        this.screen.textContent = this.enemyName + " turn";
         return true;
       } else {
         return true;
@@ -144,65 +150,76 @@ export default class Gameboard {
       return false;
     }
   }
+
   showOrHideShips() {
     this.revealShips == true
       ? (this.revealShips = false)
       : (this.revealShips = true);
     this.displayGrid();
   }
+
   receiveAttack(coords) {
     if (this.enemyBoard.shipsPlaced.length != this.enemyBoard.ships.length) {
-      console.log("must place ships first");
+      this.screen.textContent = "All ships must be placed first";
+      return false;
+    }
+    if (this.shipsPlaced.length != this.ships.length) {
+      this.screen.textContent = "All ships must be placed first";
+      return false;
+    }
+    if (!this.start) {
+      this.screen.textContent = "Click Start button to comence";
       return false;
     }
     if (this.gameOver || this.enemyBoard.gameOver) {
       return false;
     }
     if (this.thisTurn == true) {
-      console.log("You can't attack yourself");
+      this.screen.textContent = "You can't attack yourself";
       return false;
     }
     let row = coords[0];
     let col = coords[1];
     let touchedShip;
     if (this.grid[row][col].state === "ship") {
-      console.log("Hit a ship");
+      this.screen.textContent = "Ship hit";
       this.enemyBoard.thisTurn = false;
       this.thisTurn = true;
-      console.log(this.playerName + " turn");
+      this.screen.textContent = this.playerName + " turn";
       touchedShip = this.grid[row][col].shipIndex;
       this.ships[touchedShip].hit();
       this.grid[row][col].state = "hit";
       this.displayGrid();
       if (this.ships[touchedShip].isSunk()) {
         this.sunk += 1;
-        console.log("ship sunk");
+        this.screen.textContent = "Ship sunk";
         if (this.sunk == this.ships.length) {
-          console.log("game over");
+          this.screen.textContent = "Game Over!";
           this.gameOver = true;
         }
       }
     } else if (this.grid[row][col].state === "none") {
-      console.log("Missed");
+      this.screen.textContent = "Missed";
       this.thisTurn = true;
       this.enemyBoard.thisTurn = false;
-      console.log(this.playerName + " turn");
+      this.screen.textContent = this.playerName + " turn";
       this.grid[row][col].state = "miss";
       this.displayGrid();
     } else if (this.grid[row][col].state === "miss") {
-      console.log("Hit a miss, should fire again");
+      this.screen.textContent = "Already shot there, should fire again";
       this.thisTurn = false;
       this.enemyBoard.thisTurn = true;
-      console.log(this.enemyName + " turn");
+      this.screen.textContent = this.enemyName + " turn";
       return false;
     } else if (this.grid[row][col].state === "hit") {
-      console.log("Already hit, should fire again");
+      this.screen.textContent = "Already shot there, should fire again";
       this.thisTurn = false;
       this.enemyBoard.thisTurn = true;
-      console.log(this.enemyName + " turn");
+      this.screen.textContent = this.enemyName + " turn";
       return false;
     }
     if (this.isPc && this.thisTurn == true) {
+      //Add a settimeout
       this.enemyBoard.receiveAttack(this.computerAttack());
     }
   }
@@ -212,17 +229,25 @@ export default class Gameboard {
       Math.floor(Math.random() * 10),
       Math.floor(Math.random() * 10),
     ];
+    let HoV = Math.floor(Math.random() * 2);
+    if (HoV < 1) {
+      HoV = "Horizontal";
+    } else {
+      HoV = "Vertical";
+    }
     while (
-      this.placeShip(this.ships[shipNumber], [
-        currentPlacement[0],
-        currentPlacement[1],
-      ]) == false
+      this.placeShip(
+        this.ships[shipNumber],
+        [currentPlacement[0], currentPlacement[1]],
+        HoV
+      ) == false
     ) {
       currentPlacement[0] = Math.floor(Math.random() * 10);
       currentPlacement[1] = Math.floor(Math.random() * 10);
     }
     return currentPlacement;
   }
+
   computerAttack() {
     let currentAttack = [
       Math.floor(Math.random() * 10),

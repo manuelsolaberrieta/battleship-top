@@ -9,7 +9,7 @@
   </head>
   <body>
     <h1 id="title">Battlesquares</h1>
-    <div id="buttons"></div>
+    <div id="message-container"><span id="message"></span></div>
     <main>
       <div class="board-container">
         <h2>Your board</h2>
@@ -20,7 +20,15 @@
         <div class="board" id="pc-board"></div>
       </div>
     </main>
-    <div class="garage"><h2>Garage</h2></div>
+    <div id="buttons">
+      <button id="direction" class="btns" dir="Horizontal">
+        Click to Start Garage</button
+      ><button id="start" class="btns">Start</button>
+      <button id="rando" class="btns">Randomize your ships</button>
+    </div>
+    <div class="garage">
+      <h2>Ships</h2>
+    </div>
     <script src="index.js" type="module"></script>
   </body>
 </html>
