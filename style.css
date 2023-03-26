@@ -108,6 +108,7 @@ h2 {
 }
 .ship-frame {
   width: max-content;
+  height: max-content;
   display: flex;
   flex-direction: row;
 }

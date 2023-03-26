@@ -182,10 +182,9 @@ export default class Gameboard {
     let col = coords[1];
     let touchedShip;
     if (this.grid[row][col].state === "ship") {
-      this.screen.textContent = "Ship hit";
+      this.screen.textContent = "Ship hit, " + this.playerName + " turn";
       this.enemyBoard.thisTurn = false;
       this.thisTurn = true;
-      this.screen.textContent = this.playerName + " turn";
       touchedShip = this.grid[row][col].shipIndex;
       this.ships[touchedShip].hit();
       this.grid[row][col].state = "hit";
@@ -199,23 +198,20 @@ export default class Gameboard {
         }
       }
     } else if (this.grid[row][col].state === "none") {
-      this.screen.textContent = "Missed";
+      this.screen.textContent = "Missed, " + this.playerName + " turn";
       this.thisTurn = true;
       this.enemyBoard.thisTurn = false;
-      this.screen.textContent = this.playerName + " turn";
       this.grid[row][col].state = "miss";
       this.displayGrid();
     } else if (this.grid[row][col].state === "miss") {
-      this.screen.textContent = "Already shot there, should fire again";
+      this.screen.textContent = "Already shot there, fire again";
       this.thisTurn = false;
       this.enemyBoard.thisTurn = true;
-      this.screen.textContent = this.enemyName + " turn";
       return false;
     } else if (this.grid[row][col].state === "hit") {
-      this.screen.textContent = "Already shot there, should fire again";
+      this.screen.textContent = "Already shot there, fire again";
       this.thisTurn = false;
       this.enemyBoard.thisTurn = true;
-      this.screen.textContent = this.enemyName + " turn";
       return false;
     }
     if (this.isPc && this.thisTurn == true) {

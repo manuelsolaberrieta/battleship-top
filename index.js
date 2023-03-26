@@ -63,15 +63,21 @@ direction.addEventListener("click", (e) => {
 
 //Add start button so the AI properly starts attacking
 function start(player1, pcPlayer) {
-  if (
+  if (player1.board.start == true || pcPlayer.board.start == true) {
+    messageScreen.textContent = "Game already started";
+    return false;
+  } else if (
+    player1.board.shipsPlaced.length != player1.board.ships.length ||
+    pcPlayer.board.shipsPlaced.length != pcPlayer.board.ships.length
+  ) {
+    messageScreen.textContent = "All ships must be placed first";
+  } else if (
     player1.board.shipsPlaced.length == player1.board.ships.length &&
     pcPlayer.board.shipsPlaced.length == pcPlayer.board.ships.length
   ) {
     player1.board.startBoard(true);
     pcPlayer.board.startBoard(true);
     player1.board.receiveAttack(pcPlayer.board.computerAttack());
-  } else {
-    messageScreen.textContent = "All ships must be placed first";
   }
 }
 const startBtn = document.querySelector("#start");
