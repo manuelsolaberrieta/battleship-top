@@ -141,7 +141,7 @@ export default class Gameboard {
       if (this.shipsPlaced.length == this.ships.length) {
         this.thisTurn = false;
         this.enemyBoard.thisTurn = true;
-        this.screen.textContent = this.enemyName + " turn";
+        this.screen.textContent = "Press start when all ships are placed";
         return true;
       } else {
         return true;
@@ -182,7 +182,8 @@ export default class Gameboard {
     let col = coords[1];
     let touchedShip;
     if (this.grid[row][col].state === "ship") {
-      this.screen.textContent = "Ship hit, " + this.playerName + " turn";
+      this.screen.textContent =
+        this.enemyName + " hits a ship, " + this.playerName + " turn";
       this.enemyBoard.thisTurn = false;
       this.thisTurn = true;
       touchedShip = this.grid[row][col].shipIndex;
@@ -191,14 +192,16 @@ export default class Gameboard {
       this.displayGrid();
       if (this.ships[touchedShip].isSunk()) {
         this.sunk += 1;
-        this.screen.textContent = "Ship sunk";
+        this.screen.textContent =
+          this.enemyName + " sinks a ship, " + this.playerName + " turn";
         if (this.sunk == this.ships.length) {
           this.screen.textContent = "Game Over!";
           this.gameOver = true;
         }
       }
     } else if (this.grid[row][col].state === "none") {
-      this.screen.textContent = "Missed, " + this.playerName + " turn";
+      this.screen.textContent =
+        this.enemyName + " misses, " + this.playerName + " turn";
       this.thisTurn = true;
       this.enemyBoard.thisTurn = false;
       this.grid[row][col].state = "miss";
@@ -216,7 +219,9 @@ export default class Gameboard {
     }
     if (this.isPc && this.thisTurn == true) {
       //Add a settimeout
-      this.enemyBoard.receiveAttack(this.computerAttack());
+      setTimeout(() => {
+        this.enemyBoard.receiveAttack(this.computerAttack());
+      }, 1500);
     }
   }
 

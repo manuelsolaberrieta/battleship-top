@@ -75,9 +75,12 @@ function start(player1, pcPlayer) {
     player1.board.shipsPlaced.length == player1.board.ships.length &&
     pcPlayer.board.shipsPlaced.length == pcPlayer.board.ships.length
   ) {
-    player1.board.startBoard(true);
-    pcPlayer.board.startBoard(true);
-    player1.board.receiveAttack(pcPlayer.board.computerAttack());
+    messageScreen.textContent = "Pc turn, wait";
+    setTimeout(() => {
+      player1.board.startBoard(true);
+      pcPlayer.board.startBoard(true);
+      player1.board.receiveAttack(pcPlayer.board.computerAttack());
+    }, 1500);
   }
 }
 const startBtn = document.querySelector("#start");
