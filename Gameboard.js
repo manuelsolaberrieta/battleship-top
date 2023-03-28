@@ -13,6 +13,9 @@ export default class Gameboard {
     this.isPc = isPc;
     this.playerName = playerName;
     this.screen = screen;
+    this.lastAttack = undefined;
+    this.lastAttackThatHit = undefined;
+    this.pcTries = 0;
   }
 
   setEnemy(enemyBoard, enemyName) {
@@ -167,7 +170,7 @@ export default class Gameboard {
       return false;
     }
     if (!this.start) {
-      this.screen.textContent = "Click Start button to comence";
+      this.screen.textContent = "Click Start button to commence";
       return false;
     }
     if (this.gameOver || this.enemyBoard.gameOver) {
@@ -245,8 +248,63 @@ export default class Gameboard {
     }
     return currentPlacement;
   }
-
+  computerAttackFollowUp() {
+    if (this.lastAttackThatHit == undefined) {
+      return false;
+    }
+    if (this.pcTries > 3) {
+      this.pcTries = 0;
+      return false;
+    }
+    let baseAttack;
+    if (this.lastAttack.state == "hit") {
+      this.pcTries = 0;
+      baseAttack = this.lastAttack;
+    } else {
+      this.pcTries += 1;
+      baseAttack = this.lastAttackThatHit;
+    }
+    const coords = baseAttack.coords;
+    const row = coords[0];
+    const col = coords[1];
+    const possibleGuess = [
+      [row + 1, col],
+      [row - 1, col],
+      [row, col + 1],
+      [row, col - 1],
+    ];
+    let nextAttack;
+    for (let i = 0; i < possibleGuess.length; i++) {
+      nextAttack = possibleGuess[i];
+      if (nextAttack[0] < 10 && nextAttack[1] < 10) {
+        if (
+          this.enemyBoard.grid[nextAttack[0]][nextAttack[1]].state != "miss" &&
+          this.enemyBoard.grid[nextAttack[0]][nextAttack[1]].state != "hit"
+        ) {
+          if (
+            this.enemyBoard.grid[nextAttack[0]][nextAttack[1]].state == "ship"
+          ) {
+            this.lastAttackThatHit =
+              this.enemyBoard.grid[nextAttack[0]][nextAttack[1]];
+            this.lastAttack =
+              this.enemyBoard.grid[nextAttack[0]][nextAttack[1]];
+          } else {
+            this.lastAttack =
+              this.enemyBoard.grid[nextAttack[0]][nextAttack[1]];
+          }
+          return nextAttack;
+        }
+      } else {
+        continue;
+      }
+    }
+    return false;
+  }
   computerAttack() {
+    let nextAttack = this.computerAttackFollowUp();
+    if (nextAttack != false) {
+      return nextAttack;
+    }
     let currentAttack = [
       Math.floor(Math.random() * 10),
       Math.floor(Math.random() * 10),
@@ -258,6 +316,19 @@ export default class Gameboard {
     ) {
       currentAttack[0] = Math.floor(Math.random() * 10);
       currentAttack[1] = Math.floor(Math.random() * 10);
+    }
+    if (
+      this.enemyBoard.grid[currentAttack[0]][currentAttack[1]].state == "ship"
+    ) {
+      this.lastAttackThatHit =
+        this.enemyBoard.grid[currentAttack[0]][currentAttack[1]];
+      this.lastAttack =
+        this.enemyBoard.grid[currentAttack[0]][currentAttack[1]];
+    } else if (
+      this.enemyBoard.grid[currentAttack[0]][currentAttack[1]].state == "none"
+    ) {
+      this.lastAttack =
+        this.enemyBoard.grid[currentAttack[0]][currentAttack[1]];
     }
     return currentAttack;
   }
