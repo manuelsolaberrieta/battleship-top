@@ -20,6 +20,7 @@ export default class Gameboard {
     this.hitSound = new Sound("sounds/hit-ship.mp3");
     this.sunkSound = new Sound("sounds/ship-sunk.mp3");
     this.missSound = new Sound("sounds/miss-ship.mp3");
+    this.gameOverSound = new Sound("sounds/G-O.mp3");
   }
 
   setEnemy(enemyBoard, enemyName) {
@@ -187,7 +188,6 @@ export default class Gameboard {
     let col = coords[1];
     let touchedShip;
     if (this.grid[row][col].state === "ship") {
-      //play hit sound here
       this.hitSound.play();
       this.screen.textContent =
         this.enemyName + " hits a ship, " + this.playerName + " turn";
@@ -198,19 +198,18 @@ export default class Gameboard {
       this.grid[row][col].state = "hit";
       this.displayGrid();
       if (this.ships[touchedShip].isSunk()) {
-        //play sunk sound here
         this.sunkSound.play();
         this.sunk += 1;
         this.screen.textContent =
           this.enemyName + " sinks a ship, " + this.playerName + " turn";
         if (this.sunk == this.ships.length) {
-          //play game over sound here
+          this.sunkSound.stop();
+          this.gameOverSound.play();
           this.screen.textContent = "Game Over!";
           this.gameOver = true;
         }
       }
     } else if (this.grid[row][col].state === "none") {
-      //play miss sound here
       this.missSound.play();
       this.screen.textContent =
         this.enemyName + " misses, " + this.playerName + " turn";
