@@ -283,10 +283,18 @@ export default class Gameboard {
       [row, col + 1],
       [row, col - 1],
     ];
+    console.log(possibleGuess);
     let nextAttack;
     for (let i = 0; i < possibleGuess.length; i++) {
       nextAttack = possibleGuess[i];
-      if (nextAttack[0] < 10 && nextAttack[1] < 10) {
+      console.log(nextAttack);
+      console.log(this.enemyBoard.grid[nextAttack[0]][nextAttack[1]]);
+      if (
+        nextAttack[0] < 10 &&
+        nextAttack[0] >= 0 &&
+        nextAttack[1] < 10 &&
+        nextAttack[1] >= 0
+      ) {
         if (
           this.enemyBoard.grid[nextAttack[0]][nextAttack[1]].state != "miss" &&
           this.enemyBoard.grid[nextAttack[0]][nextAttack[1]].state != "hit"
