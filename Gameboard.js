@@ -67,11 +67,10 @@ export default class Gameboard {
           this.receiveAttack([i, j]);
         });
         if (place.state == "ship") {
-          //cambiar cuando termine las pruebas
           if (this.revealShips == true) {
             square.classList.add("ship-square");
           } else {
-            square.classList.add("aaaa-square");
+            square.classList.add("pc-water-square");
           }
         } else if (place.state == "none") {
           if (this.isPc) {
@@ -175,7 +174,6 @@ export default class Gameboard {
       return false;
     }
     if (this.thisTurn == true) {
-      this.screen.textContent = "You can't attack yourself";
       return false;
     }
     let row = coords[0];
@@ -218,7 +216,6 @@ export default class Gameboard {
       return false;
     }
     if (this.isPc && this.thisTurn == true) {
-      //Add a settimeout
       setTimeout(() => {
         this.enemyBoard.receiveAttack(this.computerAttack());
       }, 1500);
