@@ -21,6 +21,12 @@ export default class Gameboard {
     this.sunkSound = new Sound("sounds/ship-sunk.mp3");
     this.missSound = new Sound("sounds/miss-ship.mp3");
     this.gameOverSound = new Sound("sounds/G-O.mp3");
+    this.sounds = [
+      this.hitSound,
+      this.sunkSound,
+      this.missSound,
+      this.gameOverSound,
+    ];
   }
 
   setEnemy(enemyBoard, enemyName) {
@@ -166,6 +172,9 @@ export default class Gameboard {
   }
 
   receiveAttack(coords) {
+    this.enemyBoard.sounds.forEach((sound) => {
+      sound.stop();
+    });
     if (this.enemyBoard.shipsPlaced.length != this.enemyBoard.ships.length) {
       this.screen.textContent = "All ships must be placed first";
       return false;
@@ -283,18 +292,17 @@ export default class Gameboard {
       [row, col + 1],
       [row, col - 1],
     ];
-    console.log(possibleGuess);
     let nextAttack;
     for (let i = 0; i < possibleGuess.length; i++) {
       nextAttack = possibleGuess[i];
-      console.log(nextAttack);
-      console.log(this.enemyBoard.grid[nextAttack[0]][nextAttack[1]]);
+      console.log("next atack:" + nextAttack);
       if (
         nextAttack[0] < 10 &&
         nextAttack[0] >= 0 &&
         nextAttack[1] < 10 &&
         nextAttack[1] >= 0
       ) {
+        console.log(nextAttack);
         if (
           this.enemyBoard.grid[nextAttack[0]][nextAttack[1]].state != "miss" &&
           this.enemyBoard.grid[nextAttack[0]][nextAttack[1]].state != "hit"
@@ -313,6 +321,7 @@ export default class Gameboard {
           return nextAttack;
         }
       } else {
+        console.log("next attack no entra");
         continue;
       }
     }

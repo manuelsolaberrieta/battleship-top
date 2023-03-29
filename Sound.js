@@ -11,6 +11,7 @@ export default class Sound {
     };
     this.stop = function () {
       this.sound.pause();
+      this.sound.currentTime = 0;
     };
   }
 }
